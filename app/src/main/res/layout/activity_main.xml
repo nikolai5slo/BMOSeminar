@@ -20,6 +20,7 @@
         </TextView>
 
         <ProgressBar
+            android:id="@+id/searching"
             android:layout_width="wrap_content"
             android:layout_height="27dp"
             android:layout_gravity="right"

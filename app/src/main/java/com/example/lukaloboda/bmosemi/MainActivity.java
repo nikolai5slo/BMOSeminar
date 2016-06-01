@@ -7,9 +7,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
+import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -32,11 +34,13 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements WifiP2pManager.ConnectionInfoListener{
 
     private final IntentFilter intentFilter = new IntentFilter();
-    private WifiP2pManager.Channel mChannel;
-    private WifiP2pManager mManager;
+    public static WifiP2pManager.Channel mChannel;
+    public static WifiP2pManager mManager;
     private ConnectionHandler conHandler;
     private BroadcastReceiver mReceiver = null;
     private Activity mActivity;
+    private Handler mHandler;
+    private WiFiDevicesAdapter customAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,25 +56,24 @@ public class MainActivity extends AppCompatActivity implements WifiP2pManager.Co
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
         mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
+        mHandler = new Handler();
 
 
         ListView seznam = (ListView) findViewById(R.id.seznam);
-
-        WiFiDevicesAdapter customAdapter = new WiFiDevicesAdapter(this, R.id.seznam, new ArrayList<WiFiP2pService>());
-        seznam .setAdapter(customAdapter);
+        customAdapter = new WiFiDevicesAdapter(this, R.id.seznam, new ArrayList<WiFiP2pService>());
+        seznam.setAdapter(customAdapter);
 
         conHandler = new ConnectionHandler(mManager, mChannel, this, customAdapter);
 
         seznam.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
-                conHandler.connectP2p((WiFiP2pService)((ListView) findViewById(R.id.seznam)).getItemAtPosition(position));
+                conHandler.connectP2p((WiFiP2pService) ((ListView) findViewById(R.id.seznam)).getItemAtPosition(position));
             }
         });
 
         conHandler.serviceRegistration();
         conHandler.discoverServices();
-
     }
 
     protected void onResume() {

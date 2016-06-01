@@ -31,7 +31,7 @@ public class AudioInputStream implements Runnable{
     public AudioInputStream(int udpPort, Context mContext){
         this.port=udpPort;
         this.mContext=mContext;
-        track = new  AudioTrack(AudioManager.STREAM_VOICE_CALL, sampleRate, channelConfig, audioFormat , minBufSize, AudioTrack.MODE_STREAM);
+        track = new  AudioTrack(AudioManager.STREAM_MUSIC, sampleRate, channelConfig, audioFormat , minBufSize, AudioTrack.MODE_STREAM);
     }
 
     private int sampleRate = 8000 ; // 44100 for music

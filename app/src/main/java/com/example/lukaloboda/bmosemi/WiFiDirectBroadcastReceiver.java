@@ -42,7 +42,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             if (networkInfo.isConnected()) {
                 manager.requestConnectionInfo(channel, (WifiP2pManager.ConnectionInfoListener) activity);
             } else {
-                // It's a disconnect
+                Log.i("Neki", "Disconnect");
             }
         }
     }

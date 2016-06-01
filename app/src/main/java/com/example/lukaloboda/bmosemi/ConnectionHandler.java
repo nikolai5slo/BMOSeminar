@@ -21,7 +21,9 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Adapter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,11 +36,11 @@ public class ConnectionHandler{
 
     public static final String TXTRECORD_PROP_AVAILABLE = "available";
     public WifiP2pDnsSdServiceRequest serviceRequest;
+    public WiFiDevicesAdapter adapter;
 
     Activity activity;
     Channel mChannel;
     WifiP2pManager mManager;
-    WiFiDevicesAdapter adapter;
 
 
     public ConnectionHandler(WifiP2pManager mManager, Channel mChannel, Activity activity, WiFiDevicesAdapter adapter){
@@ -81,6 +83,7 @@ public class ConnectionHandler{
             }
         };
 
+
         // Prepare listener for discovering actual service
         DnsSdServiceResponseListener servListener = new DnsSdServiceResponseListener() {
             @Override
@@ -92,7 +95,6 @@ public class ConnectionHandler{
                     service.instanceName = instanceName;
                     service.serviceRegistrationType = registrationType;
                     adapter.add(service);
-                    adapter.notifyDataSetChanged();
                     Log.d(TAG, "onBonjourServiceAvailable " + instanceName);
                 }
             }
@@ -134,6 +136,7 @@ public class ConnectionHandler{
                     Log.e(TAG, "Service discover failed.");
             }
         });
+
     }
 
 

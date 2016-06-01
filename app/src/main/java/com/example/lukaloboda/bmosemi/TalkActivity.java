@@ -1,6 +1,8 @@
 package com.example.lukaloboda.bmosemi;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,10 +27,11 @@ import java.util.LinkedList;
 import java.util.List;
 import android.os.Handler;
 
-public class TalkActivity extends AppCompatActivity {
+public class TalkActivity extends AppCompatActivity{
     private final IntentFilter intentFilter = new IntentFilter();
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
+    private BroadcastReceiver mReceiver = null;
     public static final String TAG = "TalkActivity";
     private volatile AudioInputStream receiver=null;
     private volatile AudioStreamer streamer=null;
@@ -39,6 +42,10 @@ public class TalkActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "create");
         setContentView(R.layout.talk_screen);
+
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+
+        mReceiver = new DisconnectBroadcastReceiver(MainActivity.mManager, MainActivity.mChannel, this);
 
 
         Intent i = getIntent();
@@ -160,6 +167,7 @@ public class TalkActivity extends AppCompatActivity {
     public void onResume() {
         Log.d(TAG, "Resume");
         super.onResume();
+        registerReceiver(mReceiver, intentFilter);
         /*
         if(receiver==null)
             receiver = new AudioInputStream(2349, this);
@@ -177,6 +185,7 @@ public class TalkActivity extends AppCompatActivity {
     public void onPause() {
         Log.d(TAG, "Pause");
         super.onPause();
+        unregisterReceiver(mReceiver);
         /*
         if(receiver!=null){
             receiver.cancel();
