@@ -60,6 +60,18 @@ public class ConnectionHandler{
         // Create service
         WifiP2pDnsSdServiceInfo serviceInfo = WifiP2pDnsSdServiceInfo.newInstance(SERVICE_INSTANCE, SERVICE_REG_TYPE, record);
 
+        mManager.clearLocalServices(mChannel, new ActionListener() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFailure(int reason) {
+
+            }
+        });
+
         mManager.addLocalService(mChannel, serviceInfo, new ActionListener() {
             @Override
             public void onSuccess() {
@@ -82,7 +94,6 @@ public class ConnectionHandler{
                 Log.d(TAG, "DnsSdTxtRecord available -" + record.toString());
             }
         };
-
 
         // Prepare listener for discovering actual service
         DnsSdServiceResponseListener servListener = new DnsSdServiceResponseListener() {
@@ -137,6 +148,21 @@ public class ConnectionHandler{
             }
         });
 
+    }
+
+    public void stopDiscoveringServices(){
+
+        mManager.clearServiceRequests(mChannel, new ActionListener() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFailure(int reason) {
+
+            }
+        });
     }
 
 

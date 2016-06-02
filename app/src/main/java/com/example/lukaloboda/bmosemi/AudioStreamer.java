@@ -36,7 +36,7 @@ class AudioStreamer implements Runnable{
     private int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
     int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
 
-    public AudioStreamer(int port, Context mContext) throws SocketException {
+    public AudioStreamer(int port, Context mContext, InetAddress groupOwner) throws SocketException {
         this.port=port;
         this.mContext=mContext;
         recorder = new AudioRecord(MediaRecorder.AudioSource.DEFAULT,sampleRate,channelConfig,audioFormat,minBufSize);
@@ -89,7 +89,7 @@ class AudioStreamer implements Runnable{
 
                     Log.d(TAG, "Num clients "+clients.size());
                     for(InetAddress c: clients){
-                        DatagramPacket packet = new DatagramPacket(data, data.length, c , port);
+                        DatagramPacket packet = new DatagramPacket(data, data.length, c, port);
                         Log.d(TAG, "Sending " + c.getHostAddress());
                         socket.send(packet);
                     }

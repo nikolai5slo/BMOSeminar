@@ -7,6 +7,7 @@ import android.media.AudioTrack;
 import android.net.wifi.WifiManager;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.widget.Button;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -50,7 +51,6 @@ public class AudioInputStream implements Runnable{
     public void run() {
         Log.d(TAG, "Server handler run...");
         WifiManager wifi = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
-
         try {
             DatagramSocket serverSocket = new DatagramSocket(port);
             serverSocket.setSoTimeout(500);
@@ -61,19 +61,18 @@ public class AudioInputStream implements Runnable{
                 throw new Exception("Can't initialize audio track");
             }
             track.play();
-
             while(this.running) {
                 try {
                     serverSocket.receive(packet);
                     for (InetAddress c : clients) {
-                        DatagramPacket n= new DatagramPacket(data, data.length, c, port);
-                        serverSocket.send(n);
-                        Log.d(TAG, "Passing " + c.getHostAddress());
+                        if(!c.getHostAddress().equals(packet.getAddress().getHostAddress())){
+                            DatagramPacket n= new DatagramPacket(data, data.length, c, port);
+                            serverSocket.send(n);
+                            Log.d(TAG, "Passing " + c.getHostAddress());
+                        }
                     }
-
                     track.write(data, 0, data.length);
                 }catch (SocketTimeoutException e){
-
                 }catch (SocketException e) {
                     e.printStackTrace();
                 } catch (IOException e) {

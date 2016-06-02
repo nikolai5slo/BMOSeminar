@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
@@ -23,11 +24,20 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,10 +58,7 @@ public class MainActivity extends AppCompatActivity implements WifiP2pManager.Co
         setContentView(R.layout.activity_main);
         mActivity = this;
 
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
@@ -68,12 +75,53 @@ public class MainActivity extends AppCompatActivity implements WifiP2pManager.Co
         seznam.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
+                stop();
+                ((TextView)findViewById(R.id.status)).setText("Povezujem...");
                 conHandler.connectP2p((WiFiP2pService) ((ListView) findViewById(R.id.seznam)).getItemAtPosition(position));
             }
         });
 
         conHandler.serviceRegistration();
         conHandler.discoverServices();
+        mHandler.postDelayed(stopSearching, 20000);
+    }
+
+    Runnable stopSearching = new Runnable() {
+        @Override
+        public void run() {
+            stop();
+        }
+    };
+
+    private void stop(){
+        ((TextView) findViewById(R.id.status)).setText("Found services");
+        conHandler.stopDiscoveringServices();
+        (findViewById(R.id.searching)).setVisibility(View.INVISIBLE);
+        (findViewById(R.id.refreshButton)).setVisibility(View.VISIBLE);
+    }
+
+    private void restart(){
+        ((TextView) findViewById(R.id.status)).setText("Finding services");
+        (findViewById(R.id.refreshButton)).setVisibility(View.GONE);
+        (findViewById(R.id.searching)).setVisibility(View.VISIBLE);
+        customAdapter.clear();
+        conHandler.discoverServices();
+        mManager.cancelConnect(mChannel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFailure(int reason) {
+
+            }
+        });
+        mHandler.postDelayed(stopSearching, 20000);
+    }
+
+    public void restartDiscovery(View view){
+        restart();
     }
 
     protected void onResume() {
@@ -88,12 +136,23 @@ public class MainActivity extends AppCompatActivity implements WifiP2pManager.Co
     }
 
     public void onConnectionInfoAvailable(WifiP2pInfo p2pInfo) {
+        ((TextView) findViewById(R.id.status)).setText("Found services");
+        conHandler.stopDiscoveringServices();
+        (findViewById(R.id.searching)).setVisibility(View.INVISIBLE);
 
         Intent intent = new Intent(this, TalkActivity.class);
         intent.putExtra("IsOwner", p2pInfo.isGroupOwner);
         intent.putExtra("Address", p2pInfo.groupOwnerAddress.getHostAddress());
 
-        startActivity(intent);
+        startActivityForResult(intent, 1);
     }
 
+    protected void onActivityResult(int reqC, int resC, Intent intent){
+        if(reqC == 1){
+            if(resC == RESULT_OK){
+                stop();
+                restart();
+            }
+        }
+    }
 }

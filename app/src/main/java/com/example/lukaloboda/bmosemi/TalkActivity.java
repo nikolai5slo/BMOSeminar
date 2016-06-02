@@ -35,7 +35,6 @@ public class TalkActivity extends AppCompatActivity{
     public static final String TAG = "TalkActivity";
     private volatile AudioInputStream receiver=null;
     private volatile AudioStreamer streamer=null;
-    private Handler mDiscovery = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,18 +44,20 @@ public class TalkActivity extends AppCompatActivity{
 
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
 
+        mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        mChannel = mManager.initialize(this, getMainLooper(), null);
         mReceiver = new DisconnectBroadcastReceiver(MainActivity.mManager, MainActivity.mChannel, this);
 
 
         Intent i = getIntent();
         final boolean isOwner = i.getBooleanExtra("IsOwner", false);
         try {
-            InetAddress address = InetAddress.getByName(i.getStringExtra("Address"));
+            final InetAddress address = InetAddress.getByName(i.getStringExtra("Address"));
 
 
             receiver = new AudioInputStream(2349, this);
             receiver.start();
-            streamer = new AudioStreamer(2349, this);
+            streamer = new AudioStreamer(2349, this, address);
 
 
             if(isOwner){
@@ -71,7 +72,7 @@ public class TalkActivity extends AppCompatActivity{
                 connA.start();
             }else
             {
-                Log.d(TAG, "Connected ad client.");
+                Log.d(TAG, "Connected as client.");
                 streamer.setClients(Arrays.asList(new InetAddress[]{address}));
                 receiver.setClients(new LinkedList<InetAddress>());
 
@@ -101,9 +102,11 @@ public class TalkActivity extends AppCompatActivity{
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     streamer.startRec();
+
                     Log.d(TAG, "Action press");
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     streamer.stopRec();
+                    receiver.start();
                     Log.d(TAG, "Action release");
                 }
                 return false;
@@ -115,7 +118,19 @@ public class TalkActivity extends AppCompatActivity{
 
     }
 
+    public void disconnect(View view){
+        mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
 
+            }
+
+            @Override
+            public void onFailure(int reason) {
+
+            }
+        });
+    }
 
     private static final int TCP_SERVER_PORT = 2315;
     private static class ConnectionAccept extends Thread{
