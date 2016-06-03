@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content" android:orientation="vertical"
-    android:layout_width="fill_parent">
+    android:layout_width="fill_parent"
+    android:background="@drawable/border"
+    android:padding="10dp">
 
 
     <TableRow android:layout_width="fill_parent"
@@ -13,7 +15,7 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:textSize="18dp"
-            android:padding="4dp"
+            android:textColor="@color/text"
             android:gravity="left" />
 
     </TableRow>
@@ -23,10 +25,10 @@
 
         <TextView
             android:id="@+id/status"
+            android:textColor="@color/text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="12dp"
-            android:paddingLeft="4dp"
             android:paddingBottom="4dp"
             android:gravity="left" />
 

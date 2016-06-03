@@ -9,7 +9,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".TalkActivity"
     style="@style/AppTheme"
-    android:background="@color/colorPrimary">
+    android:background="@color/ozadje">
 
     <Button
         android:layout_width="253dp"
@@ -21,9 +21,9 @@
         android:clickable="true"
         style="@style/AppTheme"
         android:background="@drawable/pushbutton"
-        android:textColor="@color/colorText"
+        android:textColor="@color/ozadje"
         android:textStyle="bold"
-        android:textSize="@dimen/abc_text_size_headline_material"
+        android:textSize="25dp"
         android:nestedScrollingEnabled="true" />
 
     <RelativeLayout
@@ -35,8 +35,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Disconnect"
+            android:textSize="18dp"
+            android:background="@drawable/borderbutton"
+            android:textColor="@color/ozadje"
             android:layout_centerInParent="true"
-            android:padding="20dp"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
             android:onClick="disconnect"/>
 
     </RelativeLayout>

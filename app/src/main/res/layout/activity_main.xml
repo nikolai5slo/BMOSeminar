@@ -5,14 +5,16 @@
     android:orientation="vertical"
     android:layout_gravity="top"
     android:gravity="top"
-    android:layout_marginLeft="20dp"
-    android:layout_marginRight="20dp">
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingTop="10dp"
+    android:background="@color/ozadje">
 
     <LinearLayout
         android:id="@android:id/empty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dip"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal">
 
         <TextView
@@ -20,8 +22,9 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textAlignment="gravity"
-            android:textSize="20sp"
-            android:text="Finding services" >
+            android:textSize="25dp"
+            android:textColor="@color/text"
+            android:text="Finding services">
         </TextView>
 
         <ProgressBar
@@ -30,6 +33,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="right"
             android:layout_marginLeft="20dip"
+            android:paddingTop="2dp"
             style="@android:style/Widget.ProgressBar.Small"
             android:indeterminate="false">
         </ProgressBar>
@@ -41,16 +45,28 @@
     <ListView
         android:id="@+id/seznam"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp">
     </ListView>
 
-    <Button
-        android:id="@+id/refreshButton"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:text="Refresh"
-        android:visibility="gone"
-        android:onClick="restartDiscovery"/>
+        android:layout_gravity="bottom">
+
+        <Button
+            android:id="@+id/refreshButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:text="Refresh"
+            android:textSize="18dp"
+            android:visibility="gone"
+            android:textColor="@color/ozadje"
+            android:background="@drawable/borderbutton"
+            android:onClick="restartDiscovery"/>
+    </RelativeLayout>
 
 </LinearLayout>
