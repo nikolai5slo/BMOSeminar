@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements WifiP2pManager.Co
             @Override
             public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
                 stop();
-                ((TextView)findViewById(R.id.status)).setText("Povezujem...");
+                ((TextView)findViewById(R.id.status)).setText("Connecting...");
                 conHandler.connectP2p((WiFiP2pService) ((ListView) findViewById(R.id.seznam)).getItemAtPosition(position));
             }
         });
